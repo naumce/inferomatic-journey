@@ -3,18 +3,23 @@ import { ArrowRight } from "lucide-react";
 
 export const CTASection = () => {
   return (
-    <section className="py-32 px-6 relative overflow-hidden bg-gradient-hero">
-      <div className="relative z-10 max-w-4xl mx-auto text-center">
-        <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-accent bg-clip-text text-transparent">
-          Start Building Today
+    <section className="py-24 px-4">
+      <div className="max-w-4xl mx-auto text-center space-y-8">
+        <h2 className="text-4xl md:text-5xl font-bold text-foreground">
+          Ready to Get Started?
         </h2>
-        <p className="text-xl text-muted-foreground mb-12">
-          Free forever. No credit card required.
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Start routing smarter today. Free tier available. No credit card required.
         </p>
 
-        <Button size="lg" className="bg-gradient-card hover:opacity-90 text-white shadow-glow transition-all hover:scale-110 gap-2 text-lg px-8 py-6">
-          Get Started <ArrowRight className="w-5 h-5" />
-        </Button>
+        <div className="flex gap-4 justify-center">
+          <Button size="lg" className="gap-2">
+            Start Free <ArrowRight className="w-4 h-4" />
+          </Button>
+          <Button size="lg" variant="outline">
+            View Pricing
+          </Button>
+        </div>
       </div>
     </section>
   );

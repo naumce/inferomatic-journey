@@ -1,35 +1,30 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Github } from "lucide-react";
 import { InteractiveDemo } from "./InteractiveDemo";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-32 pb-20 overflow-hidden">
-      {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-hero opacity-50" />
-      
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-12 space-y-6">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary animate-fade-in">
-            <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-medium">The AI Gateway for Production</span>
-          </div>
-
-          {/* Main heading - modern and emotional */}
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tight animate-slide-up">
-            <span className="bg-gradient-card bg-clip-text text-transparent">
-              Route. Version. Ship.
-            </span>
+    <section className="relative min-h-screen flex items-center justify-center pt-32 pb-20">      
+      <div className="container mx-auto px-4 relative z-10 max-w-7xl">
+        <div className="text-center mb-16 space-y-6">
+          {/* Main heading */}
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground">
+            AI Gateway for Developers
           </h1>
           
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-            The only AI gateway with Git-powered prompts and real-time observability
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Route requests to the best AI model automatically. Version your prompts with Git. 
+            Monitor every token and dollar in real-time.
           </p>
           
-          <Button size="lg" className="bg-gradient-card hover:opacity-90 text-white shadow-glow transition-all hover:scale-105 gap-2">
-            Start Free <ArrowRight className="w-5 h-5" />
-          </Button>
+          <div className="flex gap-4 justify-center pt-4">
+            <Button size="lg" className="gap-2">
+              Start Free <ArrowRight className="w-4 h-4" />
+            </Button>
+            <Button size="lg" variant="outline" className="gap-2">
+              <Github className="w-4 h-4" /> View on GitHub
+            </Button>
+          </div>
         </div>
 
         {/* Interactive demo */}

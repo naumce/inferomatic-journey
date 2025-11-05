@@ -5,47 +5,44 @@ export const DifferentiatorsSection = () => {
   const features = [
     {
       icon: Zap,
-      title: "Auto-Routing",
-      description: "Let Infere pick the best model for every request. Cost, speed, quality - optimized automatically.",
-      gradient: "from-primary to-secondary"
+      title: "Intelligent Routing",
+      description: "Stop manually picking models. Infere automatically selects the optimal model for each request based on your cost, speed, and quality requirements. Built-in fallbacks ensure 99.9% uptime even when providers have issues.",
     },
     {
       icon: GitBranch,
-      title: "Git-Native",
-      description: "Version your prompts like code. Branch, merge, and deploy with your existing workflow.",
-      gradient: "from-secondary to-accent"
+      title: "Git-Native Prompts",
+      description: "Treat prompts like code. Create branches to test changes, submit pull requests for review, and deploy to production with confidence. Roll back instantly if something breaks. Your entire prompt history is versioned.",
     },
     {
       icon: LineChart,
-      title: "Full Observability",
-      description: "Every token, every cost, every millisecond - tracked in real-time with custom dashboards.",
-      gradient: "from-accent to-primary"
+      title: "Complete Observability",
+      description: "Know exactly what your AI is doing. Track every token, request, cost, and response time. Custom dashboards show usage patterns, cost breakdowns by model, and performance metrics. Set alerts for anomalies.",
     }
   ];
 
   return (
     <section id="features" className="py-24">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-6xl font-bold mb-4">
-            Three Core Powers
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+            Why Use Infere?
           </h2>
           <p className="text-xl text-muted-foreground">
-            Everything you need. Nothing you don't.
+            Three capabilities that set us apart
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
           {features.map((item, index) => (
             <Card 
               key={index}
-              className="group p-8 bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-glow hover:scale-105 cursor-pointer"
+              className="p-8 bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300"
             >
-              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                <item.icon className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
+                <item.icon className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
-              <p className="text-muted-foreground text-lg leading-relaxed">{item.description}</p>
+              <h3 className="text-2xl font-semibold mb-4 text-foreground">{item.title}</h3>
+              <p className="text-muted-foreground leading-relaxed">{item.description}</p>
             </Card>
           ))}
         </div>
