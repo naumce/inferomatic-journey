@@ -37,10 +37,10 @@ export const Navbar = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" className="hover:text-primary">
               Sign In
             </Button>
-            <Button size="sm">
+            <Button size="sm" className="bg-gradient-card text-white hover:opacity-90 shadow-glow transition-all hover:scale-105">
               Get Started
             </Button>
           </div>
