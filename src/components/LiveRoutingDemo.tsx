@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Send, Sparkles, CheckCircle2 } from "lucide-react";
+import { Send, Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
@@ -42,14 +42,15 @@ const MODELS = [
 export const LiveRoutingDemo = () => {
   const [input, setInput] = useState("");
   const [hoveredModel, setHoveredModel] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [showObservability, setShowObservability] = useState(false);
   const [routingStage, setRoutingStage] = useState(0);
   const [modelScores, setModelScores] = useState<Record<string, number>>({});
   const [chosenModel, setChosenModel] = useState<typeof MODELS[0] | null>(null);
+  const [isRacing, setIsRacing] = useState(false);
+  const [sendingAnimation, setSendingAnimation] = useState(false);
 
   useEffect(() => {
-    if (showObservability) {
+    if (isRacing) {
       // Reset
       setRoutingStage(0);
       setModelScores({});
@@ -58,13 +59,10 @@ export const LiveRoutingDemo = () => {
       // Stage 1: Analyzing
       setTimeout(() => setRoutingStage(1), 300);
       
-      // Stage 2: Evaluating models
+      // Stage 2: Evaluating models with racing animation
       setTimeout(() => {
         setRoutingStage(2);
-        // Animate scores
-        const winner = selectedModel 
-          ? MODELS.find(m => m.id === selectedModel) || MODELS[2]
-          : MODELS[2]; // Claude is best
+        const winner = MODELS[2]; // Claude is best
         
         let progress = 0;
         const interval = setInterval(() => {
@@ -74,22 +72,31 @@ export const LiveRoutingDemo = () => {
             setTimeout(() => {
               setRoutingStage(3);
               setChosenModel(winner);
+              setIsRacing(false);
+              setShowObservability(true);
             }, 200);
           }
           
+          // Random variations for racing effect
           setModelScores({
-            [MODELS[0].id]: Math.min(progress * 0.75, 75),
-            [MODELS[1].id]: Math.min(progress * 0.65, 65),
-            [MODELS[2].id]: Math.min(progress, winner.id === MODELS[2].id ? 100 : 85),
+            [MODELS[0].id]: Math.min(progress * 0.75 + Math.random() * 10, 75),
+            [MODELS[1].id]: Math.min(progress * 0.65 + Math.random() * 10, 65),
+            [MODELS[2].id]: Math.min(progress + Math.random() * 5, 100),
           });
         }, 20);
       }, 800);
     }
-  }, [showObservability, selectedModel]);
+  }, [isRacing]);
 
   const handleSend = () => {
     if (!input.trim()) return;
-    setShowObservability(true);
+    setSendingAnimation(true);
+    setIsRacing(true);
+    
+    // Reset animation after delay
+    setTimeout(() => {
+      setSendingAnimation(false);
+    }, 600);
   };
 
   return (
@@ -110,92 +117,148 @@ export const LiveRoutingDemo = () => {
 
         {/* Central Input */}
         <div className="max-w-3xl mx-auto mb-12">
-          <div className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-2xl">
+          <div className={`bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-2xl transition-all duration-500 ${
+            sendingAnimation ? 'scale-[0.98] shadow-[0_0_50px_rgba(var(--primary),0.3)]' : ''
+          }`}>
             <div className="flex items-center gap-4">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Start a message..."
-                className="flex-1 h-14 text-lg bg-background/50 border-border/50 focus:border-primary transition-colors"
+                className={`flex-1 h-14 text-lg bg-background/50 border-border/50 focus:border-primary transition-all duration-300 ${
+                  sendingAnimation ? 'blur-sm' : ''
+                }`}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                disabled={isRacing}
               />
               <Button
                 onClick={handleSend}
+                disabled={isRacing || !input.trim()}
                 size="lg"
-                className="h-14 px-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                className={`h-14 px-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 relative overflow-hidden group transition-all duration-300 ${
+                  sendingAnimation ? 'scale-110 shadow-[0_0_30px_rgba(var(--primary),0.6)]' : ''
+                }`}
               >
-                <Send className="w-5 h-5" />
+                {isRacing ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-1 h-1 rounded-full bg-white animate-pulse" />
+                    <div className="w-1 h-1 rounded-full bg-white animate-pulse" style={{ animationDelay: '0.2s' }} />
+                    <div className="w-1 h-1 rounded-full bg-white animate-pulse" style={{ animationDelay: '0.4s' }} />
+                  </div>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                  </>
+                )}
               </Button>
             </div>
 
             {/* Example prompts */}
             <div className="flex flex-wrap gap-2 mt-4">
-              {["Analyze this code", "Write a story", "Explain quantum physics"].map((prompt) => (
+              {["Analyze this code", "Write a story", "Explain quantum physics"].map((prompt, idx) => (
                 <button
                   key={prompt}
                   onClick={() => setInput(prompt)}
-                  className="text-xs px-3 py-2 bg-secondary/50 hover:bg-secondary text-secondary-foreground rounded-full transition-colors"
+                  disabled={isRacing}
+                  className="group relative text-xs px-4 py-2 bg-gradient-to-r from-secondary/50 to-secondary/30 hover:from-secondary hover:to-secondary/80 text-secondary-foreground rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                  style={{ animationDelay: `${idx * 0.1}s` }}
                 >
-                  {prompt}
+                  <span className="relative z-10">{prompt}</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Model Cards - Clean Horizontal Layout */}
+        {/* Model Cards - Racing Animation */}
         <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {MODELS.map((model) => (
-            <div
-              key={model.id}
-              className={`
-                relative bg-card/80 backdrop-blur-xl border-2 rounded-2xl p-6 cursor-pointer
-                transition-all duration-300 hover:shadow-2xl hover:-translate-y-1
-                ${hoveredModel === model.id ? 'border-primary shadow-lg shadow-primary/20' : 'border-border/50'}
-                ${selectedModel === model.id ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' : ''}
-              `}
-              onClick={() => setSelectedModel(selectedModel === model.id ? null : model.id)}
-              onMouseEnter={() => setHoveredModel(model.id)}
-              onMouseLeave={() => setHoveredModel(null)}
-            >
-              {/* Gradient glow effect */}
-              <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${model.color} opacity-0 hover:opacity-5 transition-opacity`} />
-              
-              <div className="relative">
-                {/* Icon and Selection indicator */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`text-4xl bg-gradient-to-br ${model.color} bg-clip-text text-transparent`}>
-                    {model.icon}
+          {MODELS.map((model, idx) => {
+            const score = modelScores[model.id] || 0;
+            const isLeading = isRacing && score === Math.max(...Object.values(modelScores));
+            
+            return (
+              <div
+                key={model.id}
+                className={`
+                  relative bg-card/80 backdrop-blur-xl border-2 rounded-2xl p-6
+                  transition-all duration-500
+                  ${isRacing ? 'animate-pulse' : ''}
+                  ${isLeading ? 'border-primary shadow-lg shadow-primary/30 scale-105 -translate-y-2' : 'border-border/50'}
+                  ${hoveredModel === model.id && !isRacing ? 'border-primary/50 shadow-lg hover:-translate-y-1' : ''}
+                `}
+                onMouseEnter={() => !isRacing && setHoveredModel(model.id)}
+                onMouseLeave={() => setHoveredModel(null)}
+                style={{ 
+                  animationDelay: `${idx * 0.1}s`,
+                  transform: isRacing ? `translateY(${Math.sin(Date.now() / 200 + idx) * 5}px)` : undefined
+                }}
+              >
+                {/* Gradient glow effect */}
+                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${model.color} transition-opacity duration-300 ${
+                  isLeading ? 'opacity-20' : hoveredModel === model.id ? 'opacity-5' : 'opacity-0'
+                }`} />
+                
+                {/* Racing indicator */}
+                {isRacing && (
+                  <div className="absolute top-2 right-2 z-10">
+                    <div className={`w-2 h-2 rounded-full ${
+                      isLeading ? 'bg-success animate-pulse' : 'bg-muted'
+                    }`} />
                   </div>
-                  {selectedModel === model.id && (
-                    <CheckCircle2 className="w-5 h-5 text-primary" />
+                )}
+                
+                <div className="relative">
+                  {/* Icon */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`text-4xl bg-gradient-to-br ${model.color} bg-clip-text text-transparent transition-transform duration-300 ${
+                      isLeading ? 'scale-110' : ''
+                    }`}>
+                      {model.icon}
+                    </div>
+                    {isRacing && (
+                      <span className="text-xs font-mono font-bold">{Math.round(score)}%</span>
+                    )}
+                  </div>
+
+                  {/* Model Name */}
+                  <h3 className="text-lg font-bold mb-1">{model.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">by {model.provider}</p>
+
+                  {/* Stats */}
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Tokens/wk</span>
+                      <span className="font-mono text-primary">{model.tokens}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Latency</span>
+                      <span className="font-mono">{model.latency}s</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Weekly growth</span>
+                      <span className={`font-mono ${model.growth.startsWith('-') ? 'text-red-500' : 'text-green-500'}`}>
+                        {model.growth}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Racing progress bar */}
+                  {isRacing && (
+                    <div className="mt-3 pt-3 border-t border-border/50">
+                      <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full bg-gradient-to-r ${model.color} transition-all duration-300 rounded-full`}
+                          style={{ width: `${score}%` }}
+                        />
+                      </div>
+                    </div>
                   )}
                 </div>
-
-                {/* Model Name */}
-                <h3 className="text-lg font-bold mb-1">{model.name}</h3>
-                <p className="text-sm text-muted-foreground mb-4">by {model.provider}</p>
-
-                {/* Stats */}
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tokens/wk</span>
-                    <span className="font-mono text-primary">{model.tokens}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Latency</span>
-                    <span className="font-mono">{model.latency}s</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Weekly growth</span>
-                    <span className={`font-mono ${model.growth.startsWith('-') ? 'text-red-500' : 'text-green-500'}`}>
-                      {model.growth}
-                    </span>
-                  </div>
-                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* View Trending Link */}
