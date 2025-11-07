@@ -118,27 +118,9 @@ export default {
           "0%": { transform: "translateX(100%)", opacity: "0" },
           "100%": { transform: "translateX(0)", opacity: "1" }
         },
-        "slide-in-right-enhanced": {
-          "0%": { transform: "translateX(100%)", opacity: "0", filter: "blur(10px)" },
-          "60%": { transform: "translateX(-10px)" },
-          "100%": { transform: "translateX(0)", opacity: "1", filter: "blur(0px)" }
-        },
-        "grow-from-center": {
-          "0%": { 
-            transform: "translate(-50vw, -50vh) scale(0)",
-            transformOrigin: "center center",
-            opacity: "0",
-            filter: "blur(20px)"
-          },
-          "50%": {
-            transform: "translate(-50vw, -50vh) scale(0.5)",
-            opacity: "0.5"
-          },
-          "100%": { 
-            transform: "translate(0, 0) scale(1)",
-            opacity: "1",
-            filter: "blur(0px)"
-          }
+        "slide-in-smooth": {
+          "0%": { transform: "translateX(100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" }
         },
         "spin-slow": {
           "0%": { transform: "rotate(0deg)" },
@@ -172,8 +154,7 @@ export default {
         "pulse-slow": "pulse-slow 3s ease-in-out infinite",
         "shimmer": "shimmer 2s linear infinite",
         "slide-in-right": "slide-in-right 0.3s ease-out",
-        "slide-in-right-enhanced": "slide-in-right-enhanced 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
-        "grow-from-center": "grow-from-center 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "slide-in-smooth": "slide-in-smooth 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
         "spin-slow": "spin-slow 8s linear infinite",
         "orbit-0": "orbit-0 2s linear infinite",
         "orbit-1": "orbit-1 2s linear infinite",

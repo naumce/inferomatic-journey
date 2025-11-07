@@ -208,21 +208,6 @@ export const LiveRoutingDemo = () => {
           </div>
         </div>
 
-        {/* Live Token Counter */}
-        {isRacing && (
-          <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
-            <div className="bg-card/95 backdrop-blur-xl border border-primary/30 rounded-lg px-6 py-3 shadow-2xl shadow-primary/20">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                <div className="text-sm font-mono">
-                  <span className="text-muted-foreground">Tokens processed:</span>
-                  <span className="text-primary font-bold ml-2">{tokenCount.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Central Routing Orb with Inference Power */}
         {showRoutingOrb && (
           <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center">
@@ -574,13 +559,16 @@ export const LiveRoutingDemo = () => {
         </div>
       </div>
 
-      {/* Observability Side Panel Growing from Orb */}
+      {/* Observability Side Panel */}
       {showObservability && (
-        <div className="fixed right-0 top-0 bottom-0 z-50 w-96 animate-grow-from-center">
-          {/* Backdrop blur */}
-          <div className="absolute inset-y-0 -left-32 w-32 bg-gradient-to-l from-black/20 to-transparent backdrop-blur-sm" />
+        <div className="fixed inset-0 z-50 pointer-events-none">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-background/20 backdrop-blur-sm animate-fade-in pointer-events-auto" 
+               onClick={() => setShowObservability(false)} 
+          />
           
-          <div className="h-full bg-card/95 backdrop-blur-xl border-l border-border/50 shadow-2xl overflow-y-auto">
+          {/* Panel */}
+          <div className="absolute inset-y-0 right-0 w-96 bg-card/98 backdrop-blur-xl border-l border-border shadow-2xl pointer-events-auto animate-slide-in-smooth overflow-y-auto">
             {/* Header */}
             <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between sticky top-0 bg-card/95 backdrop-blur-xl z-10 shadow-sm">
               <div>
