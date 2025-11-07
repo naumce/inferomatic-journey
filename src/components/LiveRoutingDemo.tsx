@@ -186,40 +186,96 @@ export const LiveRoutingDemo = () => {
           </div>
         </div>
 
-        {/* Model Cards with Matrix Animation */}
+        {/* GPU Inference Visualization */}
         <div className="relative max-w-5xl mx-auto">
-          {/* Matrix connecting lines during racing */}
+          {/* Neural Network Connections & Data Flow */}
           {isRacing && (
-            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" style={{ filter: 'blur(0.5px)' }}>
-              <defs>
-                <linearGradient id="matrixGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="hsl(var(--success))" stopOpacity="0.2" />
-                </linearGradient>
-              </defs>
-              {MODELS.map((_, fromIdx) => 
-                MODELS.map((__, toIdx) => {
-                  if (fromIdx === toIdx) return null;
-                  const delay = (fromIdx + toIdx) * 0.1;
+            <div className="absolute inset-0 w-full h-full pointer-events-none z-10">
+              <svg className="absolute inset-0 w-full h-full">
+                <defs>
+                  <linearGradient id="dataFlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0">
+                      <animate attributeName="stop-opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite" />
+                    </stop>
+                    <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity="1" />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0">
+                      <animate attributeName="stop-opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite" />
+                    </stop>
+                  </linearGradient>
+                  
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
+                
+                {/* Neural network paths between cards */}
+                {MODELS.map((_, idx) => {
+                  const x = (idx * 33.33) + 16.66;
+                  const nextX = ((idx + 1) * 33.33) + 16.66;
+                  
+                  if (idx === MODELS.length - 1) return null;
+                  
                   return (
-                    <line
-                      key={`${fromIdx}-${toIdx}`}
-                      x1={`${(fromIdx * 33.33) + 16.66}%`}
-                      y1="50%"
-                      x2={`${(toIdx * 33.33) + 16.66}%`}
-                      y2="50%"
-                      stroke="url(#matrixGrad)"
-                      strokeWidth="1"
-                      className="animate-pulse"
-                      style={{ 
-                        animationDelay: `${delay}s`,
-                        opacity: 0.3
-                      }}
-                    />
+                    <g key={`neural-${idx}`}>
+                      {/* Main data path */}
+                      <path
+                        d={`M ${x}% 50% Q ${(x + nextX) / 2}% 30%, ${nextX}% 50%`}
+                        stroke="url(#dataFlow)"
+                        strokeWidth="2"
+                        fill="none"
+                        filter="url(#glow)"
+                      />
+                      <path
+                        d={`M ${x}% 50% Q ${(x + nextX) / 2}% 70%, ${nextX}% 50%`}
+                        stroke="url(#dataFlow)"
+                        strokeWidth="2"
+                        fill="none"
+                        filter="url(#glow)"
+                        style={{ animationDelay: '0.3s' }}
+                      />
+                      
+                      {/* Neurons/nodes */}
+                      {[...Array(5)].map((_, nodeIdx) => {
+                        const nodeX = x + ((nextX - x) * (nodeIdx / 4));
+                        const nodeY = 50 + (Math.sin(nodeIdx) * 20);
+                        return (
+                          <circle
+                            key={`node-${idx}-${nodeIdx}`}
+                            cx={`${nodeX}%`}
+                            cy={`${nodeY}%`}
+                            r="2"
+                            fill="hsl(var(--primary))"
+                            className="animate-pulse"
+                            style={{ animationDelay: `${nodeIdx * 0.1}s` }}
+                          />
+                        );
+                      })}
+                    </g>
                   );
-                })
-              )}
-            </svg>
+                })}
+                
+                {/* Data packets flowing */}
+                {[...Array(6)].map((_, packetIdx) => (
+                  <circle
+                    key={`packet-${packetIdx}`}
+                    r="3"
+                    fill="hsl(var(--success))"
+                    filter="url(#glow)"
+                  >
+                    <animateMotion
+                      dur="2s"
+                      repeatCount="indefinite"
+                      path={`M 16.66% 50% Q 50% ${30 + (packetIdx % 3) * 10}%, 83.33% 50%`}
+                      begin={`${packetIdx * 0.3}s`}
+                    />
+                  </circle>
+                ))}
+              </svg>
+            </div>
           )}
 
           <div className="grid grid-cols-3 gap-6 relative z-20">
@@ -244,20 +300,93 @@ export const LiveRoutingDemo = () => {
                     isLeading ? 'opacity-20 blur-xl' : hoveredModel === model.id ? 'opacity-10' : 'opacity-0'
                   }`} />
                   
-                  {/* Racing particles */}
+                  {/* GPU Compute Visualization */}
                   {isRacing && (
                     <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-                      {[...Array(3)].map((_, i) => (
+                      {/* Computing particles */}
+                      {[...Array(12)].map((_, i) => (
                         <div
                           key={i}
-                          className={`absolute w-1 h-1 rounded-full bg-gradient-to-r ${model.color} animate-pulse`}
+                          className={`absolute w-1 h-1 rounded-full bg-gradient-to-r ${model.color} opacity-70`}
                           style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                            animationDelay: `${i * 0.2}s`
+                            left: `${(i % 4) * 25 + 10}%`,
+                            top: `${Math.floor(i / 4) * 33 + 10}%`,
+                            animation: `pulse 0.${3 + (i % 3)}s ease-in-out infinite`,
+                            animationDelay: `${i * 0.05}s`
                           }}
                         />
                       ))}
+                      
+                      {/* Neural network layers visualization */}
+                      <svg className="absolute inset-0 w-full h-full opacity-30">
+                        <defs>
+                          <linearGradient id={`neuralGrad-${idx}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="currentColor" stopOpacity="0.8" />
+                            <stop offset="100%" stopColor="currentColor" stopOpacity="0.1" />
+                          </linearGradient>
+                        </defs>
+                        
+                        {/* Input layer */}
+                        {[...Array(3)].map((_, layerIdx) => (
+                          <g key={`layer-${layerIdx}`}>
+                            {[...Array(4)].map((_, nodeIdx) => {
+                              const x = 20 + (layerIdx * 30);
+                              const y = 20 + (nodeIdx * 20);
+                              return (
+                                <circle
+                                  key={`neuron-${layerIdx}-${nodeIdx}`}
+                                  cx={`${x}%`}
+                                  cy={`${y}%`}
+                                  r="2"
+                                  fill={`url(#neuralGrad-${idx})`}
+                                  className="animate-pulse"
+                                  style={{ animationDelay: `${(layerIdx + nodeIdx) * 0.1}s` }}
+                                />
+                              );
+                            })}
+                          </g>
+                        ))}
+                        
+                        {/* Connections between layers */}
+                        {[...Array(2)].map((_, layerIdx) => (
+                          <g key={`connections-${layerIdx}`} opacity="0.2">
+                            {[...Array(4)].map((_, fromNode) => 
+                              [...Array(4)].map((_, toNode) => {
+                                const x1 = 20 + (layerIdx * 30);
+                                const y1 = 20 + (fromNode * 20);
+                                const x2 = 20 + ((layerIdx + 1) * 30);
+                                const y2 = 20 + (toNode * 20);
+                                return (
+                                  <line
+                                    key={`conn-${fromNode}-${toNode}`}
+                                    x1={`${x1}%`}
+                                    y1={`${y1}%`}
+                                    x2={`${x2}%`}
+                                    y2={`${y2}%`}
+                                    stroke="currentColor"
+                                    strokeWidth="0.5"
+                                    className="animate-pulse"
+                                  />
+                                );
+                              })
+                            )}
+                          </g>
+                        ))}
+                      </svg>
+                      
+                      {/* Token processing animation */}
+                      <div className="absolute bottom-2 left-2 right-2 flex gap-1">
+                        {[...Array(8)].map((_, i) => (
+                          <div
+                            key={i}
+                            className={`flex-1 h-1 rounded-full bg-gradient-to-r ${model.color} opacity-50`}
+                            style={{
+                              animation: `pulse 0.5s ease-in-out infinite`,
+                              animationDelay: `${i * 0.05}s`
+                            }}
+                          />
+                        ))}
+                      </div>
                     </div>
                   )}
                   
