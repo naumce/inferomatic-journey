@@ -63,7 +63,7 @@ export const LiveRoutingDemo = () => {
         </div>
 
         {/* Main Interactive Area */}
-        <div className="relative flex items-center justify-center min-h-[500px]">
+        <div className="relative flex items-center justify-center" style={{ minHeight: '700px' }}>
           {/* Connection Lines - appear on hover */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
             <defs>
@@ -76,9 +76,12 @@ export const LiveRoutingDemo = () => {
             
             {hoveredModel && MODELS.map((model, idx) => {
               if (model.id !== hoveredModel) return null;
-              const angle = (idx * 360) / MODELS.length - 90;
+              const totalModels = MODELS.length;
+              const startAngle = totalModels === 3 ? -60 : 0;
+              const angleStep = totalModels === 3 ? 60 : 120;
+              const angle = startAngle + (idx * angleStep);
               const radian = (angle * Math.PI) / 180;
-              const radius = 280;
+              const radius = 350;
               const centerX = '50%';
               const centerY = '50%';
               const endX = `calc(50% + ${Math.cos(radian) * radius}px)`;
@@ -100,27 +103,27 @@ export const LiveRoutingDemo = () => {
           </svg>
 
           {/* Central Input */}
-          <div className="relative z-10 w-full max-w-2xl">
-            <div className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-8 shadow-2xl">
+          <div className="relative z-10 w-full max-w-2xl px-4">
+            <div className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center gap-4">
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Start a message..."
-                  className="flex-1 h-14 text-lg bg-background/50 border-border/50 focus:border-primary transition-colors"
+                  className="flex-1 h-12 text-base bg-background/50 border-border/50 focus:border-primary transition-colors"
                   onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 />
                 <Button
                   onClick={handleSend}
                   size="lg"
-                  className="h-14 px-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                  className="h-12 px-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4" />
                 </Button>
               </div>
 
               {/* Example prompts */}
-              <div className="flex flex-wrap gap-2 mt-4">
+              <div className="flex flex-wrap gap-2 mt-3">
                 {["Analyze this code", "Write a story", "Explain quantum physics"].map((prompt) => (
                   <button
                     key={prompt}
@@ -136,27 +139,31 @@ export const LiveRoutingDemo = () => {
 
           {/* Floating Model Cards */}
           {MODELS.map((model, idx) => {
-            const angle = (idx * 360) / MODELS.length - 90;
+            const totalModels = MODELS.length;
+            const startAngle = totalModels === 3 ? -60 : 0;
+            const angleStep = totalModels === 3 ? 60 : 120;
+            const angle = startAngle + (idx * angleStep);
             const radian = (angle * Math.PI) / 180;
-            const radius = 280;
+            const radius = 350;
             const x = Math.cos(radian) * radius;
             const y = Math.sin(radian) * radius;
 
             return (
               <div
                 key={model.id}
-                className="absolute z-20 transition-all duration-300"
+                className="absolute transition-all duration-300"
                 style={{
                   left: '50%',
                   top: '50%',
-                  transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) ${hoveredModel === model.id ? 'scale(1.05)' : 'scale(1)'}`
+                  transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) ${hoveredModel === model.id ? 'scale(1.05)' : 'scale(1)'}`,
+                  zIndex: 20
                 }}
                 onMouseEnter={() => setHoveredModel(model.id)}
                 onMouseLeave={() => setHoveredModel(null)}
               >
                 <div
                   className={`
-                    relative w-64 bg-card/80 backdrop-blur-xl border-2 rounded-xl p-6 cursor-pointer
+                    relative w-56 bg-card/90 backdrop-blur-xl border-2 rounded-xl p-5 cursor-pointer
                     transition-all duration-300 hover:shadow-2xl
                     ${hoveredModel === model.id ? 'border-primary shadow-lg shadow-primary/20' : 'border-border/50'}
                     ${selectedModel === model.id ? 'ring-2 ring-primary' : ''}
@@ -164,25 +171,25 @@ export const LiveRoutingDemo = () => {
                   onClick={() => setSelectedModel(model.id)}
                 >
                   {/* Gradient glow effect */}
-                  <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${model.color} opacity-0 group-hover:opacity-10 transition-opacity blur-xl`} />
+                  <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${model.color} opacity-0 hover:opacity-10 transition-opacity blur-xl`} />
                   
                   <div className="relative">
                     {/* Icon and Provider */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`text-4xl bg-gradient-to-br ${model.color} bg-clip-text text-transparent`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className={`text-3xl bg-gradient-to-br ${model.color} bg-clip-text text-transparent`}>
                         {model.icon}
                       </div>
                       {hoveredModel === model.id && (
-                        <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+                        <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                       )}
                     </div>
 
                     {/* Model Name */}
-                    <h3 className="text-lg font-bold mb-1">{model.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">by {model.provider}</p>
+                    <h3 className="text-base font-bold mb-1">{model.name}</h3>
+                    <p className="text-xs text-muted-foreground mb-3">by {model.provider}</p>
 
                     {/* Stats */}
-                    <div className="space-y-2 text-sm">
+                    <div className="space-y-1.5 text-xs">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Tokens/wk</span>
                         <span className="font-mono text-primary">{model.tokens}</span>
