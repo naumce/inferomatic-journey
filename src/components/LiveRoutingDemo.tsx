@@ -7,8 +7,12 @@ const MODELS = [
   {
     id: "gemini-pro",
     name: "Gemini 2.5 Pro",
-    provider: "google",
-    icon: "✦",
+    provider: "Google",
+    logo: (
+      <svg viewBox="0 0 24 24" className="w-full h-full">
+        <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+    ),
     tokens: "197.3B",
     latency: 2.5,
     cost: 0.12,
@@ -18,8 +22,12 @@ const MODELS = [
   {
     id: "gpt-5",
     name: "GPT-5",
-    provider: "openai",
-    icon: "⚡",
+    provider: "OpenAI",
+    logo: (
+      <svg viewBox="0 0 24 24" className="w-full h-full">
+        <path fill="currentColor" d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0l-4.83-2.786A4.504 4.504 0 0 1 2.34 7.872zm16.597 3.855l-5.833-3.387L15.119 7.2a.076.076 0 0 1 .071 0l4.83 2.791a4.494 4.494 0 0 1-.676 8.105v-5.678a.79.79 0 0 0-.407-.667zm2.01-3.023l-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.83-2.787a4.5 4.5 0 0 1 6.68 4.66zm-12.64 4.135l-2.02-1.164a.08.08 0 0 1-.038-.057V6.075a4.5 4.5 0 0 1 7.375-3.453l-.142.08L8.704 5.46a.795.795 0 0 0-.393.681zm1.097-2.365l2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5z"/>
+      </svg>
+    ),
     tokens: "59.6B",
     latency: 8.3,
     cost: 0.15,
@@ -29,8 +37,15 @@ const MODELS = [
   {
     id: "claude-4.5",
     name: "Claude Sonnet 4.5",
-    provider: "anthropic",
-    icon: "◆",
+    provider: "Anthropic",
+    logo: (
+      <svg viewBox="0 0 24 24" className="w-full h-full">
+        <rect x="4" y="4" width="7" height="7" rx="1" fill="currentColor"/>
+        <rect x="13" y="4" width="7" height="7" rx="1" fill="currentColor"/>
+        <rect x="4" y="13" width="7" height="7" rx="1" fill="currentColor"/>
+        <rect x="13" y="13" width="7" height="7" rx="1" fill="currentColor"/>
+      </svg>
+    ),
     tokens: "634.2B",
     latency: 1.9,
     cost: 0.08,
@@ -117,15 +132,15 @@ export const LiveRoutingDemo = () => {
 
         {/* Central Input */}
         <div className="max-w-3xl mx-auto mb-12">
-          <div className={`bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-2xl transition-all duration-500 ${
+          <div className={`bg-card/50 backdrop-blur-xl border border-border/50 rounded-xl p-3 shadow-2xl transition-all duration-500 ${
             sendingAnimation ? 'scale-[0.98] shadow-[0_0_50px_rgba(var(--primary),0.3)]' : ''
           }`}>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Start a message..."
-                className={`flex-1 h-14 text-lg bg-background/50 border-border/50 focus:border-primary transition-all duration-300 ${
+                className={`flex-1 h-11 text-base bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 transition-all duration-300 ${
                   sendingAnimation ? 'blur-sm' : ''
                 }`}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
@@ -134,34 +149,33 @@ export const LiveRoutingDemo = () => {
               <Button
                 onClick={handleSend}
                 disabled={isRacing || !input.trim()}
-                size="lg"
-                className={`h-14 px-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 relative overflow-hidden group transition-all duration-300 ${
-                  sendingAnimation ? 'scale-110 shadow-[0_0_30px_rgba(var(--primary),0.6)]' : ''
-                }`}
+                className={`h-11 w-11 p-0 bg-primary hover:bg-primary/90 relative overflow-hidden group transition-all duration-300 rounded-lg ${
+                  sendingAnimation ? 'scale-110 shadow-[0_0_30px_rgba(var(--primary),0.8)]' : ''
+                } ${!input.trim() ? 'opacity-50' : 'shadow-lg shadow-primary/25'}`}
               >
                 {isRacing ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-0.5">
                     <div className="w-1 h-1 rounded-full bg-white animate-pulse" />
-                    <div className="w-1 h-1 rounded-full bg-white animate-pulse" style={{ animationDelay: '0.2s' }} />
-                    <div className="w-1 h-1 rounded-full bg-white animate-pulse" style={{ animationDelay: '0.4s' }} />
+                    <div className="w-1 h-1 rounded-full bg-white animate-pulse" style={{ animationDelay: '0.15s' }} />
+                    <div className="w-1 h-1 rounded-full bg-white animate-pulse" style={{ animationDelay: '0.3s' }} />
                   </div>
                 ) : (
                   <>
-                    <Send className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <Send className="w-4 h-4 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent -translate-x-full -translate-y-full group-hover:translate-x-full group-hover:translate-y-full transition-transform duration-700" />
                   </>
                 )}
               </Button>
             </div>
 
             {/* Example prompts */}
-            <div className="flex flex-wrap gap-2 mt-4">
+            <div className="flex flex-wrap gap-2 mt-2">
               {["Analyze this code", "Write a story", "Explain quantum physics"].map((prompt, idx) => (
                 <button
                   key={prompt}
                   onClick={() => setInput(prompt)}
                   disabled={isRacing}
-                  className="group relative text-xs px-4 py-2 bg-gradient-to-r from-secondary/50 to-secondary/30 hover:from-secondary hover:to-secondary/80 text-secondary-foreground rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                  className="group relative text-xs px-3 py-1.5 bg-secondary/40 hover:bg-secondary/60 text-secondary-foreground rounded-md transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
                   style={{ animationDelay: `${idx * 0.1}s` }}
                 >
                   <span className="relative z-10">{prompt}</span>
@@ -172,93 +186,141 @@ export const LiveRoutingDemo = () => {
           </div>
         </div>
 
-        {/* Model Cards - Racing Animation */}
-        <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {MODELS.map((model, idx) => {
-            const score = modelScores[model.id] || 0;
-            const isLeading = isRacing && score === Math.max(...Object.values(modelScores));
-            
-            return (
-              <div
-                key={model.id}
-                className={`
-                  relative bg-card/80 backdrop-blur-xl border-2 rounded-2xl p-6
-                  transition-all duration-500
-                  ${isRacing ? 'animate-pulse' : ''}
-                  ${isLeading ? 'border-primary shadow-lg shadow-primary/30 scale-105 -translate-y-2' : 'border-border/50'}
-                  ${hoveredModel === model.id && !isRacing ? 'border-primary/50 shadow-lg hover:-translate-y-1' : ''}
-                `}
-                onMouseEnter={() => !isRacing && setHoveredModel(model.id)}
-                onMouseLeave={() => setHoveredModel(null)}
-                style={{ 
-                  animationDelay: `${idx * 0.1}s`,
-                  transform: isRacing ? `translateY(${Math.sin(Date.now() / 200 + idx) * 5}px)` : undefined
-                }}
-              >
-                {/* Gradient glow effect */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${model.color} transition-opacity duration-300 ${
-                  isLeading ? 'opacity-20' : hoveredModel === model.id ? 'opacity-5' : 'opacity-0'
-                }`} />
-                
-                {/* Racing indicator */}
-                {isRacing && (
-                  <div className="absolute top-2 right-2 z-10">
-                    <div className={`w-2 h-2 rounded-full ${
-                      isLeading ? 'bg-success animate-pulse' : 'bg-muted'
-                    }`} />
-                  </div>
-                )}
-                
-                <div className="relative">
-                  {/* Icon */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`text-4xl bg-gradient-to-br ${model.color} bg-clip-text text-transparent transition-transform duration-300 ${
-                      isLeading ? 'scale-110' : ''
-                    }`}>
-                      {model.icon}
-                    </div>
-                    {isRacing && (
-                      <span className="text-xs font-mono font-bold">{Math.round(score)}%</span>
-                    )}
-                  </div>
+        {/* Model Cards with Matrix Animation */}
+        <div className="relative max-w-5xl mx-auto">
+          {/* Matrix connecting lines during racing */}
+          {isRacing && (
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" style={{ filter: 'blur(0.5px)' }}>
+              <defs>
+                <linearGradient id="matrixGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="hsl(var(--success))" stopOpacity="0.2" />
+                </linearGradient>
+              </defs>
+              {MODELS.map((_, fromIdx) => 
+                MODELS.map((__, toIdx) => {
+                  if (fromIdx === toIdx) return null;
+                  const delay = (fromIdx + toIdx) * 0.1;
+                  return (
+                    <line
+                      key={`${fromIdx}-${toIdx}`}
+                      x1={`${(fromIdx * 33.33) + 16.66}%`}
+                      y1="50%"
+                      x2={`${(toIdx * 33.33) + 16.66}%`}
+                      y2="50%"
+                      stroke="url(#matrixGrad)"
+                      strokeWidth="1"
+                      className="animate-pulse"
+                      style={{ 
+                        animationDelay: `${delay}s`,
+                        opacity: 0.3
+                      }}
+                    />
+                  );
+                })
+              )}
+            </svg>
+          )}
 
-                  {/* Model Name */}
-                  <h3 className="text-lg font-bold mb-1">{model.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-4">by {model.provider}</p>
-
-                  {/* Stats */}
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Tokens/wk</span>
-                      <span className="font-mono text-primary">{model.tokens}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Latency</span>
-                      <span className="font-mono">{model.latency}s</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Weekly growth</span>
-                      <span className={`font-mono ${model.growth.startsWith('-') ? 'text-red-500' : 'text-green-500'}`}>
-                        {model.growth}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Racing progress bar */}
+          <div className="grid grid-cols-3 gap-6 relative z-20">
+            {MODELS.map((model, idx) => {
+              const score = modelScores[model.id] || 0;
+              const isLeading = isRacing && score === Math.max(...Object.values(modelScores));
+              
+              return (
+                <div
+                  key={model.id}
+                  className={`
+                    group relative bg-card/80 backdrop-blur-xl border-2 rounded-2xl p-6
+                    transition-all duration-500
+                    ${isLeading ? 'border-primary shadow-2xl shadow-primary/40 scale-105 -translate-y-2' : 'border-border/50'}
+                    ${hoveredModel === model.id && !isRacing ? 'border-primary/50 shadow-xl hover:-translate-y-1' : ''}
+                  `}
+                  onMouseEnter={() => !isRacing && setHoveredModel(model.id)}
+                  onMouseLeave={() => setHoveredModel(null)}
+                >
+                  {/* Gradient glow effect */}
+                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${model.color} transition-all duration-500 ${
+                    isLeading ? 'opacity-20 blur-xl' : hoveredModel === model.id ? 'opacity-10' : 'opacity-0'
+                  }`} />
+                  
+                  {/* Racing particles */}
                   {isRacing && (
-                    <div className="mt-3 pt-3 border-t border-border/50">
-                      <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden">
+                    <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+                      {[...Array(3)].map((_, i) => (
                         <div
-                          className={`h-full bg-gradient-to-r ${model.color} transition-all duration-300 rounded-full`}
-                          style={{ width: `${score}%` }}
+                          key={i}
+                          className={`absolute w-1 h-1 rounded-full bg-gradient-to-r ${model.color} animate-pulse`}
+                          style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                            animationDelay: `${i * 0.2}s`
+                          }}
                         />
-                      </div>
+                      ))}
                     </div>
                   )}
+                  
+                  {/* Racing indicator */}
+                  {isRacing && (
+                    <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold">{Math.round(score)}%</span>
+                      <div className={`w-2 h-2 rounded-full ${
+                        isLeading ? 'bg-success animate-ping' : 'bg-muted animate-pulse'
+                      }`} />
+                    </div>
+                  )}
+                  
+                  <div className="relative">
+                    {/* Logo */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className={`w-12 h-12 bg-gradient-to-br ${model.color} bg-clip-text text-transparent p-2 transition-all duration-300 ${
+                        hoveredModel === model.id ? 'scale-110 rotate-6' : ''
+                      } ${isLeading ? 'scale-125 rotate-12' : ''}`}>
+                        {model.logo}
+                      </div>
+                    </div>
+
+                    {/* Model Name */}
+                    <h3 className="text-lg font-bold mb-1">{model.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">by {model.provider}</p>
+
+                    {/* Stats */}
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Tokens/wk</span>
+                        <span className="font-mono text-primary">{model.tokens}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Latency</span>
+                        <span className="font-mono">{model.latency}s</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Weekly growth</span>
+                        <span className={`font-mono ${model.growth.startsWith('-') ? 'text-red-500' : 'text-green-500'}`}>
+                          {model.growth}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Racing progress bar */}
+                    {isRacing && (
+                      <div className="mt-3 pt-3 border-t border-border/50">
+                        <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden relative">
+                          <div
+                            className={`h-full bg-gradient-to-r ${model.color} transition-all duration-300 rounded-full relative overflow-hidden`}
+                            style={{ width: `${score}%` }}
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         {/* View Trending Link */}
@@ -302,7 +364,9 @@ export const LiveRoutingDemo = () => {
                   {MODELS.map((model) => (
                     <div key={model.id} className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm">{model.icon}</span>
+                        <div className={`w-4 h-4 bg-gradient-to-br ${model.color} bg-clip-text text-transparent`}>
+                          {model.logo}
+                        </div>
                         <span className="text-xs flex-1">{model.name}</span>
                         <span className="text-xs text-muted-foreground tabular-nums">
                           {Math.round(modelScores[model.id] || 0)}%
@@ -326,7 +390,9 @@ export const LiveRoutingDemo = () => {
                   <div className="pt-3 border-t border-border/50">
                     <div className="text-xs text-muted-foreground mb-2">Selected Model</div>
                     <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg border border-primary/20">
-                      <span className="text-2xl">{chosenModel.icon}</span>
+                      <div className={`w-8 h-8 bg-gradient-to-br ${chosenModel.color} bg-clip-text text-transparent p-1`}>
+                        {chosenModel.logo}
+                      </div>
                       <div className="flex-1">
                         <div className="text-sm font-semibold">{chosenModel.name}</div>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
