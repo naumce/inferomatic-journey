@@ -63,6 +63,8 @@ export const LiveRoutingDemo = () => {
   const [chosenModel, setChosenModel] = useState<typeof MODELS[0] | null>(null);
   const [isRacing, setIsRacing] = useState(false);
   const [sendingAnimation, setSendingAnimation] = useState(false);
+  const [tokenCount, setTokenCount] = useState(0);
+  const [bubbles, setBubbles] = useState<Array<{id: number, x: number, y: number}>>([]);
 
   useEffect(() => {
     if (isRacing) {
@@ -70,6 +72,15 @@ export const LiveRoutingDemo = () => {
       setRoutingStage(0);
       setModelScores({});
       setChosenModel(null);
+      setTokenCount(0);
+      
+      // Animate token count
+      const tokenInterval = setInterval(() => {
+        setTokenCount(prev => {
+          const next = prev + Math.floor(Math.random() * 50) + 10;
+          return next > 1000 ? 1000 : next;
+        });
+      }, 100);
 
       // Stage 1: Analyzing
       setTimeout(() => setRoutingStage(1), 300);
@@ -84,12 +95,27 @@ export const LiveRoutingDemo = () => {
           progress += 5;
           if (progress >= 100) {
             clearInterval(interval);
+            clearInterval(tokenInterval);
+            
+            // Bubble collection animation
+            const newBubbles = [...Array(20)].map((_, i) => ({
+              id: i,
+              x: Math.random() * 100,
+              y: Math.random() * 100
+            }));
+            setBubbles(newBubbles);
+            
             setTimeout(() => {
+              setBubbles([]);
               setRoutingStage(3);
               setChosenModel(winner);
               setIsRacing(false);
-              setShowObservability(true);
-            }, 200);
+              
+              // Delay observability for bubble explosion effect
+              setTimeout(() => {
+                setShowObservability(true);
+              }, 300);
+            }, 800);
           }
           
           // Random variations for racing effect
@@ -185,6 +211,38 @@ export const LiveRoutingDemo = () => {
             </div>
           </div>
         </div>
+
+        {/* Live Token Counter */}
+        {isRacing && (
+          <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+            <div className="bg-card/95 backdrop-blur-xl border border-primary/30 rounded-lg px-6 py-3 shadow-2xl shadow-primary/20">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                <div className="text-sm font-mono">
+                  <span className="text-muted-foreground">Tokens processed:</span>
+                  <span className="text-primary font-bold ml-2">{tokenCount.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Bubble Collection Animation */}
+        {bubbles.length > 0 && (
+          <div className="fixed inset-0 pointer-events-none z-40">
+            {bubbles.map((bubble) => (
+              <div
+                key={bubble.id}
+                className="absolute w-3 h-3 rounded-full bg-gradient-to-r from-primary to-success opacity-80 animate-pulse"
+                style={{
+                  left: `${bubble.x}%`,
+                  top: `${bubble.y}%`,
+                  animation: 'bubble-collect 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         {/* GPU Inference Visualization */}
         <div className="relative max-w-5xl mx-auto">
@@ -300,6 +358,19 @@ export const LiveRoutingDemo = () => {
                     isLeading ? 'opacity-20 blur-xl' : hoveredModel === model.id ? 'opacity-10' : 'opacity-0'
                   }`} />
                   
+                  {/* Compute Heatmap Overlay */}
+                  {isRacing && (
+                    <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                      <div 
+                        className={`absolute inset-0 bg-gradient-to-br ${model.color} transition-opacity duration-500`}
+                        style={{ 
+                          opacity: (score / 100) * 0.3,
+                          mixBlendMode: 'screen'
+                        }}
+                      />
+                    </div>
+                  )}
+
                   {/* GPU Compute Visualization */}
                   {isRacing && (
                     <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
@@ -461,23 +532,29 @@ export const LiveRoutingDemo = () => {
         </div>
       </div>
 
-      {/* Observability Side Panel */}
+      {/* Observability Side Panel with Enhanced Animation */}
       {showObservability && (
-        <div className="fixed right-6 top-24 z-50 animate-slide-in-right max-h-[calc(100vh-120px)] overflow-y-auto">
-          <div className="w-96 bg-card/95 backdrop-blur-xl border border-border/50 rounded-lg shadow-2xl overflow-hidden">
+        <div className="fixed right-0 top-0 bottom-0 z-50 w-96 animate-slide-in-right-enhanced">
+          {/* Backdrop blur */}
+          <div className="absolute inset-y-0 -left-32 w-32 bg-gradient-to-l from-black/20 to-transparent backdrop-blur-sm" />
+          
+          <div className="h-full bg-card/95 backdrop-blur-xl border-l border-border/50 shadow-2xl overflow-y-auto">
             {/* Header */}
-            <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between sticky top-0 bg-card/95 backdrop-blur-xl z-10">
-              <div className="text-sm font-semibold">Intelligent Routing</div>
+            <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between sticky top-0 bg-card/95 backdrop-blur-xl z-10 shadow-sm">
+              <div>
+                <div className="text-base font-bold">Intelligent Routing</div>
+                <div className="text-xs text-muted-foreground">Live Analysis Complete</div>
+              </div>
               <button 
                 onClick={() => setShowObservability(false)}
-                className="w-6 h-6 rounded hover:bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                className="w-8 h-8 rounded-lg hover:bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:rotate-90"
               >
                 ×
               </button>
             </div>
 
             {/* Content */}
-            <div className="p-4 space-y-4">
+            <div className="p-6 space-y-4">
               {/* Stage 1 */}
               <div className={`flex items-center gap-2 text-sm transition-opacity ${routingStage >= 1 ? 'opacity-100' : 'opacity-30'}`}>
                 <div className={routingStage >= 1 ? 'text-success' : 'text-muted-foreground'}>
