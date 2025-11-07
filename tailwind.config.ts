@@ -123,10 +123,42 @@ export default {
           "60%": { transform: "translateX(-10px)" },
           "100%": { transform: "translateX(0)", opacity: "1", filter: "blur(0px)" }
         },
-        "bubble-collect": {
-          "0%": { transform: "translate(0, 0) scale(1)", opacity: "0.8" },
-          "50%": { transform: "translate(0, 0) scale(1.5)", opacity: "1" },
-          "100%": { transform: "translate(calc(50vw - 50%), calc(50vh - 50%)) scale(0)", opacity: "0" }
+        "grow-from-center": {
+          "0%": { 
+            transform: "translate(-50vw, -50vh) scale(0)",
+            transformOrigin: "center center",
+            opacity: "0",
+            filter: "blur(20px)"
+          },
+          "50%": {
+            transform: "translate(-50vw, -50vh) scale(0.5)",
+            opacity: "0.5"
+          },
+          "100%": { 
+            transform: "translate(0, 0) scale(1)",
+            opacity: "1",
+            filter: "blur(0px)"
+          }
+        },
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" }
+        },
+        "orbit-0": {
+          "0%": { transform: "translate(-50%, -50%) rotate(0deg) translateX(60px) rotate(0deg)" },
+          "100%": { transform: "translate(-50%, -50%) rotate(360deg) translateX(60px) rotate(-360deg)" }
+        },
+        "orbit-1": {
+          "0%": { transform: "translate(-50%, -50%) rotate(90deg) translateX(60px) rotate(-90deg)" },
+          "100%": { transform: "translate(-50%, -50%) rotate(450deg) translateX(60px) rotate(-450deg)" }
+        },
+        "orbit-2": {
+          "0%": { transform: "translate(-50%, -50%) rotate(180deg) translateX(60px) rotate(-180deg)" },
+          "100%": { transform: "translate(-50%, -50%) rotate(540deg) translateX(60px) rotate(-540deg)" }
+        },
+        "orbit-3": {
+          "0%": { transform: "translate(-50%, -50%) rotate(270deg) translateX(60px) rotate(-270deg)" },
+          "100%": { transform: "translate(-50%, -50%) rotate(630deg) translateX(60px) rotate(-630deg)" }
         },
       },
       animation: {
@@ -141,7 +173,12 @@ export default {
         "shimmer": "shimmer 2s linear infinite",
         "slide-in-right": "slide-in-right 0.3s ease-out",
         "slide-in-right-enhanced": "slide-in-right-enhanced 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
-        "bubble-collect": "bubble-collect 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "grow-from-center": "grow-from-center 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "spin-slow": "spin-slow 8s linear infinite",
+        "orbit-0": "orbit-0 2s linear infinite",
+        "orbit-1": "orbit-1 2s linear infinite",
+        "orbit-2": "orbit-2 2s linear infinite",
+        "orbit-3": "orbit-3 2s linear infinite",
       },
     },
   },

@@ -64,7 +64,7 @@ export const LiveRoutingDemo = () => {
   const [isRacing, setIsRacing] = useState(false);
   const [sendingAnimation, setSendingAnimation] = useState(false);
   const [tokenCount, setTokenCount] = useState(0);
-  const [bubbles, setBubbles] = useState<Array<{id: number, x: number, y: number}>>([]);
+  const [showRoutingOrb, setShowRoutingOrb] = useState(false);
 
   useEffect(() => {
     if (isRacing) {
@@ -73,6 +73,7 @@ export const LiveRoutingDemo = () => {
       setModelScores({});
       setChosenModel(null);
       setTokenCount(0);
+      setShowRoutingOrb(true);
       
       // Animate token count
       const tokenInterval = setInterval(() => {
@@ -97,25 +98,20 @@ export const LiveRoutingDemo = () => {
             clearInterval(interval);
             clearInterval(tokenInterval);
             
-            // Bubble collection animation
-            const newBubbles = [...Array(20)].map((_, i) => ({
-              id: i,
-              x: Math.random() * 100,
-              y: Math.random() * 100
-            }));
-            setBubbles(newBubbles);
-            
             setTimeout(() => {
-              setBubbles([]);
               setRoutingStage(3);
               setChosenModel(winner);
               setIsRacing(false);
               
-              // Delay observability for bubble explosion effect
+              // Observability grows from orb
               setTimeout(() => {
                 setShowObservability(true);
-              }, 300);
-            }, 800);
+                // Keep orb visible briefly during transition
+                setTimeout(() => {
+                  setShowRoutingOrb(false);
+                }, 400);
+              }, 200);
+            }, 500);
           }
           
           // Random variations for racing effect
@@ -227,20 +223,66 @@ export const LiveRoutingDemo = () => {
           </div>
         )}
 
-        {/* Bubble Collection Animation */}
-        {bubbles.length > 0 && (
-          <div className="fixed inset-0 pointer-events-none z-40">
-            {bubbles.map((bubble) => (
-              <div
-                key={bubble.id}
-                className="absolute w-3 h-3 rounded-full bg-gradient-to-r from-primary to-success opacity-80 animate-pulse"
-                style={{
-                  left: `${bubble.x}%`,
-                  top: `${bubble.y}%`,
-                  animation: 'bubble-collect 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
-                }}
-              />
-            ))}
+        {/* Central Routing Orb with Inference Power */}
+        {showRoutingOrb && (
+          <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center">
+            <div className="relative">
+              {/* Core orb */}
+              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary via-success to-primary animate-spin-slow relative">
+                {/* Inner glow */}
+                <div className="absolute inset-2 rounded-full bg-gradient-to-br from-primary/80 to-success/80 animate-pulse" />
+                
+                {/* Center symbol */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles className="w-12 h-12 text-white animate-pulse" />
+                </div>
+                
+                {/* Orbiting particles */}
+                {[...Array(8)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-2 h-2 rounded-full bg-white"
+                    style={{
+                      top: '50%',
+                      left: '50%',
+                      animation: `orbit-${i % 4} 2s linear infinite`,
+                      animationDelay: `${i * 0.25}s`
+                    }}
+                  />
+                ))}
+              </div>
+              
+              {/* Expanding rings */}
+              <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping" />
+              <div className="absolute inset-0 rounded-full border-2 border-success/30 animate-ping" style={{ animationDelay: '0.5s' }} />
+              
+              {/* Energy pulses */}
+              {[...Array(12)].map((_, i) => {
+                const angle = (i * 30) * (Math.PI / 180);
+                const distance = 80;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                return (
+                  <div
+                    key={i}
+                    className="absolute w-1 h-1 rounded-full bg-primary"
+                    style={{
+                      left: `calc(50% + ${x}px)`,
+                      top: `calc(50% + ${y}px)`,
+                      animation: `pulse 1s ease-in-out infinite`,
+                      animationDelay: `${i * 0.1}s`
+                    }}
+                  />
+                );
+              })}
+              
+              {/* Routing text */}
+              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                <div className="text-sm font-bold text-primary animate-pulse">
+                  Routing Intelligence Active
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -532,9 +574,9 @@ export const LiveRoutingDemo = () => {
         </div>
       </div>
 
-      {/* Observability Side Panel with Enhanced Animation */}
+      {/* Observability Side Panel Growing from Orb */}
       {showObservability && (
-        <div className="fixed right-0 top-0 bottom-0 z-50 w-96 animate-slide-in-right-enhanced">
+        <div className="fixed right-0 top-0 bottom-0 z-50 w-96 animate-grow-from-center">
           {/* Backdrop blur */}
           <div className="absolute inset-y-0 -left-32 w-32 bg-gradient-to-l from-black/20 to-transparent backdrop-blur-sm" />
           
