@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { Send, Sparkles, Zap, TrendingUp, DollarSign, Clock, CheckCircle2, Activity } from "lucide-react";
+import { Send, Sparkles, CheckCircle2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Dialog, DialogContent } from "./ui/dialog";
 
 const MODELS = [
   {
@@ -208,124 +207,71 @@ export const LiveRoutingDemo = () => {
         </div>
       </div>
 
-      {/* Observability Modal */}
-      <Dialog open={showObservability} onOpenChange={setShowObservability}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden border-2 border-primary/20">
-          <div className="bg-gradient-to-br from-card via-card to-primary/5 p-8">
+      {/* Observability Side Panel */}
+      {showObservability && (
+        <div className="fixed right-6 top-24 z-50 animate-slide-in-right">
+          <div className="w-80 bg-card/95 backdrop-blur-xl border border-border/50 rounded-lg shadow-2xl overflow-hidden">
             {/* Header */}
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold">Live Observability</h3>
-                <p className="text-sm text-muted-foreground">Watch intelligent routing in action</p>
-              </div>
+            <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
+              <div className="text-sm font-semibold">Routing</div>
+              <button 
+                onClick={() => setShowObservability(false)}
+                className="w-6 h-6 rounded hover:bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+              >
+                ×
+              </button>
             </div>
 
-            {/* Routing Stages */}
-            <div className="space-y-6 mb-8">
-              {/* Stage 1: Analyzing */}
-              <div className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-500 ${
-                routingStage >= 1 ? 'border-primary/30 bg-primary/5' : 'border-border/50 opacity-40'
-              }`}>
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center ${
-                  routingStage >= 1 ? 'animate-pulse' : ''
-                }`}>
-                  <Sparkles className="w-5 h-5 text-white" />
+            {/* Content */}
+            <div className="p-4 space-y-3">
+              {/* Stage 1 */}
+              <div className={`flex items-center gap-2 text-sm transition-opacity ${routingStage >= 1 ? 'opacity-100' : 'opacity-30'}`}>
+                <div className={routingStage >= 1 ? 'text-success' : 'text-muted-foreground'}>
+                  {routingStage >= 1 ? '✓' : '○'}
                 </div>
-                <div className="flex-1">
-                  <div className="font-semibold">Analyzing Prompt</div>
-                  <div className="text-xs text-muted-foreground">Processing complexity, context, and requirements</div>
-                </div>
-                {routingStage >= 1 && <CheckCircle2 className="w-5 h-5 text-success" />}
+                <span>Analyzing prompt</span>
               </div>
 
-              {/* Stage 2: Evaluating Models */}
-              <div className={`p-4 rounded-xl border-2 transition-all duration-500 ${
-                routingStage >= 2 ? 'border-primary/30 bg-primary/5' : 'border-border/50 opacity-40'
-              }`}>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center ${
-                    routingStage >= 2 ? 'animate-pulse' : ''
-                  }`}>
-                    <Zap className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-semibold">Evaluating Models</div>
-                    <div className="text-xs text-muted-foreground">Scoring based on cost, latency, and quality</div>
-                  </div>
-                  {routingStage >= 3 && <CheckCircle2 className="w-5 h-5 text-success" />}
-                </div>
-
-                {/* Model Scores */}
-                {routingStage >= 2 && (
-                  <div className="space-y-3 ml-14">
-                    {MODELS.map((model) => (
-                      <div key={model.id} className="space-y-1">
-                        <div className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className={`text-lg bg-gradient-to-br ${model.color} bg-clip-text text-transparent`}>
-                              {model.icon}
-                            </span>
-                            <span className="font-medium">{model.name}</span>
-                          </div>
-                          <span className="font-bold tabular-nums">{Math.round(modelScores[model.id] || 0)}%</span>
-                        </div>
-                        <div className="h-2 bg-muted/30 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full bg-gradient-to-r ${model.color} transition-all duration-300 ease-out rounded-full`}
-                            style={{ width: `${modelScores[model.id] || 0}%` }}
-                          />
-                        </div>
+              {/* Stage 2 - Models */}
+              {routingStage >= 2 && (
+                <div className="space-y-2 animate-fade-in">
+                  {MODELS.map((model) => (
+                    <div key={model.id} className="flex items-center gap-2">
+                      <span className="text-sm">{model.icon}</span>
+                      <div className="flex-1 h-1.5 bg-muted/30 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full bg-gradient-to-r ${model.color} transition-all duration-300`}
+                          style={{ width: `${modelScores[model.id] || 0}%` }}
+                        />
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Stage 3: Winner */}
-              {routingStage >= 3 && chosenModel && (
-                <div className="p-6 rounded-xl border-2 border-primary bg-gradient-to-br from-primary/10 to-primary/5 animate-fade-in">
-                  <div className="flex items-center gap-6">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${chosenModel.color} flex items-center justify-center shadow-lg`}>
-                      <span className="text-3xl">{chosenModel.icon}</span>
+                      <span className="text-xs text-muted-foreground tabular-nums w-8 text-right">
+                        {Math.round(modelScores[model.id] || 0)}%
+                      </span>
                     </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Winner */}
+              {routingStage >= 3 && chosenModel && (
+                <div className="mt-3 pt-3 border-t border-border/50 animate-fade-in">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{chosenModel.icon}</span>
                     <div className="flex-1">
-                      <div className="text-sm text-muted-foreground mb-1">Selected Model</div>
-                      <div className="text-2xl font-bold mb-2">{chosenModel.name}</div>
-                      <div className="flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-1">
-                          <DollarSign className="w-4 h-4 text-success" />
-                          <span className="font-mono">${chosenModel.cost}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-4 h-4 text-blue-500" />
-                          <span className="font-mono">{chosenModel.latency}s</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <TrendingUp className="w-4 h-4 text-primary" />
-                          <span className="font-semibold">Best Match</span>
-                        </div>
+                      <div className="text-sm font-semibold">{chosenModel.name}</div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                        <span>${chosenModel.cost}</span>
+                        <span>·</span>
+                        <span>{chosenModel.latency}s</span>
                       </div>
                     </div>
                   </div>
                 </div>
               )}
             </div>
-
-            {/* Close button */}
-            {routingStage >= 3 && (
-              <Button 
-                onClick={() => setShowObservability(false)} 
-                className="w-full h-12 bg-gradient-to-r from-primary to-primary/80"
-              >
-                Continue
-              </Button>
-            )}
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </section>
   );
 };
